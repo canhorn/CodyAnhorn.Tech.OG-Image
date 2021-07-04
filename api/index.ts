@@ -1,12 +1,15 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { parseRequest } from './_lib/parser';
 import { getScreenshot } from './_lib/chromium';
+import { parseRequest } from './_lib/parser';
 import { getHtml } from './_lib/template';
 
 const isDev = !process.env.AWS_REGION;
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
 
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
+export default async function handler(
+    req: IncomingMessage,
+    res: ServerResponse
+) {
     try {
         const parsedReq = parseRequest(req);
         const html = getHtml(parsedReq);
@@ -16,10 +19,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             return;
         }
         const { fileType } = parsedReq;
+        // fs.writeFileSync('/temp/export.html', html);
         const file = await getScreenshot(html, fileType, isDev);
         res.statusCode = 200;
         res.setHeader('Content-Type', `image/${fileType}`);
-        res.setHeader('Cache-Control', `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`);
+        res.setHeader(
+            'Cache-Control',
+            `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`
+        );
         res.end(file);
     } catch (e) {
         res.statusCode = 500;

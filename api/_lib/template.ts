@@ -66,6 +66,7 @@ function getCss(theme: string, fontSize: string) {
     }
 
     .logo-wrapper {
+        grid-area: logo;
         display: flex;
         align-items: center;
         align-content: center;
@@ -95,16 +96,33 @@ function getCss(theme: string, fontSize: string) {
     }
     
     .heading {
+        grid-area: heading;
         font-family: 'Inter', sans-serif;
-        font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
         color: ${foreground};
         line-height: 1.8;
-    }`;
+	border-bottom: solid 8px purple;
+    }
+
+    .description {
+        grid-area: description;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8em;
+        font-style: normal;
+        color: ${foreground};
+        line-height: 1.8;
+    }
+
+    .grid {
+        display: grid;
+	padding: 30px;
+        font-size: ${sanitizeHtml(fontSize)};
+        grid-template: 'logo' 'heading' 'description';
+     }`;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, images, widths, heights } = parsedReq;
+    const { text, theme, md, heading, fontSize, images, widths, heights } = parsedReq;
     return `<!DOCTYPE html>
 <html>
     <meta charset="utf-8">
@@ -114,15 +132,14 @@ export function getHtml(parsedReq: ParsedRequest) {
         ${getCss(theme, fontSize)}
     </style>
     <body>
-        <div>
-            <div class="spacer">
+        <div class="grid">
             <div class="logo-wrapper">
                 ${images.map((img, i) =>
                     getPlusSign(i) + getImage(img, widths[i], heights[i])
                 ).join('')}
             </div>
-            <div class="spacer">
-            <div class="heading">${emojify(
+	    <div class="heading">${heading}</div>
+            <div class="description">${emojify(
                 md ? marked(text) : sanitizeHtml(text)
             )}
             </div>

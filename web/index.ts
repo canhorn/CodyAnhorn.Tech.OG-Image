@@ -202,6 +202,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fontSize = '100px',
         theme = 'light',
         md = true,
+	heading = 'Heading',
         text = '**Hello** World',
         images=[imageLightOptions[0].value],
         widths=[],
@@ -219,6 +220,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.searchParams.append('theme', theme);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
+    url.searchParams.append('heading', heading);
     for (let image of images) {
         url.searchParams.append('images', image);
     }
@@ -269,6 +271,15 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         options: markdownOptions,
                         value: mdValue,
                         onchange: (val: string) => setLoadingState({ md: val === '1' })
+                    })
+                }),
+                H(Field, {
+                    label: 'Heading',
+                    input: H(TextInput, {
+                        value: heading,
+                        oninput: (val: string) => {
+                            setLoadingState({ heading: val, overrideUrl: url });
+                        }
                     })
                 }),
                 H(Field, {
